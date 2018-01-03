@@ -1,11 +1,23 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-// import PropTypes from 'prop-types';
+import {
+  observer,
+  inject,
+} from 'mobx-react';
+import PropTypes from 'prop-types'; // eslint-disable-line
 import Tabs, { Tab } from 'material-ui/Tabs';
+import List from 'material-ui/List';
+import { CircularProgress } from 'material-ui/Progress';
 
 import Container from '../layout/container';
 import TopicListItem from './list-item';
+import { AppState, TopicStore } from '../../store/store';
 
+@inject(stores => ({
+  appState: stores.appState,
+  topicStore: stores.topicStore,
+}))
+@observer
 class TopicList extends React.Component {
   state = {
     tabIndex: 0,
@@ -25,6 +37,13 @@ class TopicList extends React.Component {
     const {
       tabIndex,
     } = this.state;
+    const {
+      topicStore: {
+        topics,
+        syncing: syncingTopics,
+      },
+    } = this.props;
+
     return (
       <Container>
         <Helmet>
@@ -39,10 +58,19 @@ class TopicList extends React.Component {
           <Tab label="精品" />
           <Tab label="测试" />
         </Tabs>
-        <TopicListItem topic={{}} onClick={this.listItemClick} />
+        <List>
+          {
+            topics.map(topic => <TopicListItem topic={topic} onClick={this.listItemClick} />)
+          }
+        </List>
       </Container>
     );
   }
 }
+
+TopicList.wrappedComponent.propTypes = {
+  appState: PropTypes.instanceOf(AppState),
+  topicStore: PropTypes.instanceOf(TopicStore),
+};
 
 export default TopicList;
