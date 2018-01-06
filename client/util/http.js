@@ -7,14 +7,14 @@ const parseUrl = (url, params) => {
     result += `${key}=${params[key]}&`; // eslint-disable-line
     return result;
   }, '');
-  return `${baseUrl}/${url}?${str.substr(0, str.length - 1)}`;
+  return `${baseUrl}/api${url}?${str.substr(0, str.length - 1)}`;
 };
 
-export const get = (url, params, data) => (
+export const get = (url, params) => (
   new Promise((resolve, reject) => {
-    axios.post(parseUrl(url, params), data)
+    axios.get(parseUrl(url, params))
       .then((res) => {
-        const { data } = res; // eslint-disable-line
+        const { data } = res;
         if (data && data.success === true) {
           resolve(data);
         } else {
@@ -24,9 +24,9 @@ export const get = (url, params, data) => (
   })
 );
 
-export const post = (url, params) => (
+export const post = (url, params, datas) => (
   new Promise((resolve, reject) => {
-    axios.get(parseUrl(url, params))
+    axios.post(parseUrl(url, params), datas)
       .then((res) => {
         const { data } = res;
         if (data && data.success === true) {

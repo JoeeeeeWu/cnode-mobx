@@ -36,7 +36,7 @@ if (isDev) {
     host: '0.0.0.0',
     compress: true,
     port: '8888',
-    contentBase: path.join(__dirname, '../disk'),
+    // contentBase: path.join(__dirname, '../disk'),
     hot: true,
     overlay: {
       errors: true,

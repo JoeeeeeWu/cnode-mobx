@@ -11,11 +11,12 @@ const { createMuiTheme } = require('material-ui/styles');
 const createGenerateClassName = require('material-ui/styles/createGenerateClassName').default;
 const colors = require('material-ui/colors');
 
-const getStoreState = stores =>
+const getStoreState = stores => (
   Object.keys(stores).reduce((result, storeName) => {
     result[storeName] = stores[storeName].toJson();
     return result;
-  }, {});
+  }, {})
+);
 
 module.exports = (bundle, template, req, res) => {
   return new Promise((resolve, reject) => {

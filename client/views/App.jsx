@@ -6,7 +6,7 @@ import AppBar from './layout/app-bar';
 function App() {
   return (
     <div>
-      <AppBar />
+      <AppBar key="app-bar" />
       <Routes key="routes" />,
     </div>
   );
