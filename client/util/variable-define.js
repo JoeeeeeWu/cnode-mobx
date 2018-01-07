@@ -27,4 +27,15 @@ export const topicSchema = {
   replies: [],
 };
 
-export const replaySchema = {};
+export const replaySchema = {
+  id: '',
+  author: {
+    loginname: '',
+    avatar_url: '',
+  },
+  content: '',
+  ups: [],
+  create_at: '',
+  reply_id: null,
+  is_uped: false,
+};

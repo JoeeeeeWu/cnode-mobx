@@ -1,0 +1,137 @@
+import React from 'react';
+import PropTypes from 'prop-types'; // eslint-disable-line
+import {
+  inject,
+  observer,
+} from 'mobx-react';
+import SimpleMDE from 'react-simplemde-editor';
+import TextField from 'material-ui/TextField';
+import Radio from 'material-ui/Radio';
+import Button from 'material-ui/Button';
+import IconReply from 'material-ui-icons/Reply';
+import { withStyles } from 'material-ui/styles';
+
+import Container from '../layout/container';
+import createStyles from './styles';
+
+import { tabs } from '../../util/variable-define';
+
+@inject(stores => ({
+  appStore: stores.appStore,
+  topicStore: stores.topicStore,
+}))
+@observer
+class TopicCreate extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object,
+  }
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  }
+
+  state = {
+    title: '',
+    content: '',
+    tab: 'dev',
+  }
+
+  handleTitleChange = (e) => {
+    this.setState({
+      title: e.target.value,
+    });
+  }
+
+  handleContentChange = (value) => {
+    this.setState({
+      content: value,
+    });
+  }
+
+  handleChangeTab = (e) => {
+    this.setState({
+      tab: e.currentTarget.value,
+    });
+  }
+
+  handleCreate = () => {
+    const {
+      title,
+      content,
+      tab,
+    } = this.state;
+    const {
+      appStore,
+    } = this.props;
+    if (!title) {
+      return appStore.notify({
+        message: '标题不能为空！',
+      });
+    }
+    if (!content) {
+      return appStore.notify({
+        message: '内容不能为空！',
+      });
+    }
+    return this.props.topicStore.createTopic(title, tab, content)
+      .then(() => this.context.router.history.push('/index'))
+      .catch(err => appStore.notify({
+        message: err.message,
+      }));
+  }
+
+  render() {
+    const { classes } = this.props;
+    return (
+      <Container>
+        <div className={classes.root}>
+          <TextField
+            className={classes.title}
+            label="标题"
+            value={this.state.title}
+            onChange={this.handleTitleChange}
+            fullWidth
+          />
+          <SimpleMDE
+            onChange={this.handleContentChange}
+            value={this.state.content}
+            options={{
+              toolbar: false,
+              spellChecker: false,
+              placeholder: '发表你的主题',
+            }}
+          />
+          <div>
+            {
+              Object.keys(tabs).map((tab) => {
+                if (tab !== 'all' && tab !== 'good') {
+                  return (
+                    <span className={classes.selectItem} key={tab}>
+                      <Radio
+                        value={tab}
+                        checked={tab === this.state.tab}
+                        onChange={this.handleChangeTab}
+                      />
+                      {tabs[tab]}
+                    </span>
+                  );
+                }
+                return null;
+              })
+            }
+          </div>
+          <Button fab color="primary" onClick={this.handleCreate} className={classes.replyButton}>
+            <IconReply />
+          </Button>
+        </div>
+      </Container>
+    );
+  }
+}
+
+TopicCreate.wrappedComponent.propTypes = {
+  topicStore: PropTypes.object.isRequired,
+  appStore: PropTypes.object.isRequired,
+};
+
+export default withStyles(createStyles)(TopicCreate);

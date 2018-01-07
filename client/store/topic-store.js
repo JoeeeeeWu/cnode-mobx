@@ -8,7 +8,7 @@ import {
 // import { create } from 'domain';
 
 import { topicSchema } from '../util/variable-define';
-import { get } from '../util/http';
+import { get, post } from '../util/http';
 
 const createTopic = topic => Object.assign({}, topicSchema, topic);
 
@@ -26,7 +26,11 @@ class TopicStore {
   @observable
   details;
   @observable
-  syncing;
+  syncing = false;
+  @observable
+  cteatedTopics;
+  @observable
+  tab = undefined;
 
   constructor({ syncing = false, topics = [], details = [] } = {}) {
     this.syncing = syncing;
@@ -42,11 +46,6 @@ class TopicStore {
   }
 
   @action
-  addTopic = (topic) => {
-    this.topics.push(new Topic(createTopic(topic)));
-  }
-
-  @action
   fetchTopics = tab => new Promise((resolve, reject) => {
     this.syncing = true;
     this.topics = [];
@@ -55,9 +54,7 @@ class TopicStore {
       tab,
     }).then((res) => {
       if (res.success) {
-        res.data.forEach((topic) => {
-          this.addTopic(topic);
-        });
+        this.topics = res.data.map(topic => new Topic(createTopic(topic)));
         resolve();
       } else {
         reject();
@@ -69,7 +66,8 @@ class TopicStore {
     });
   })
 
-  @action getTopicDetail = id => new Promise((resolve, reject) => {
+  @action
+  getTopicDetail = id => new Promise((resolve, reject) => {
     if (this.detailMap[id]) {
       resolve(this.detailMap[id]);
     } else {
@@ -86,6 +84,35 @@ class TopicStore {
       }).catch(err => reject(err));
     }
   })
+
+  @action
+  createTopic = (title, tab, content) => new Promise((resolve, reject) => {
+    post('/topics', {
+      title,
+      content,
+      tab,
+    }).then((res) => {
+      if (res.success) {
+        const topic = {
+          title,
+          content,
+          tab,
+          id: res.topic_id,
+          create_at: Date.now(),
+        };
+        this.cteatedTopics.push(new TopicStore(createTopic(topic)));
+        resolve(topic);
+      } else {
+        reject(new Error(res.error_msg || '未知错误'));
+      }
+    }).catch((err) => {
+      if (err.response) {
+        reject(new Error(err.response.data.error_msg || '未知错误'));
+      } else {
+        reject(new Error('未知错误'));
+      }
+    });
+  });
 }
 
 export default TopicStore;

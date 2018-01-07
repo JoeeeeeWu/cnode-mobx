@@ -12,6 +12,8 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import { CircularProgress } from 'material-ui/Progress';
 
+import SimpleMDE from 'react-simplemde-editor';
+
 import Container from '../layout/container';
 import Reply from './reply';
 import { topicDetailStyle } from './styles';
@@ -19,12 +21,17 @@ import { topicDetailStyle } from './styles';
 
 @inject(stores => ({
   topicStore: stores.topicStore,
+  user: stores.appStore.user,
 }))
 @observer
 class TopicDetail extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
+  }
+
+  state = {
+    newReply: '',
   }
 
   componentDidMount = () => {
@@ -37,9 +44,14 @@ class TopicDetail extends React.Component {
     return this.props.topicStore.detailMap[id];
   }
 
+  handleNewReplyChange = (value) => {
+    this.setState({
+      newReply: value,
+    });
+  }
+
   render() {
     const topic = this.getTopic();
-    console.log(topic);
     const { classes } = this.props;
     if (!topic) {
       return (
@@ -70,11 +82,25 @@ class TopicDetail extends React.Component {
                 <header className={classes.replyHeader}>
                   <span>我的最新回复</span>
                 </header>
-                {
-                  topic.createdReplies.map(reply => (
-                    <Reply reply={reply} key={reply.id} />
-                  ))
-                }
+                <section>
+                  <SimpleMDE
+                    onChange={this.handleNewReplyChange}
+                    value={this.state.newReply}
+                    options={{
+                      toolbar: false,
+                      autoFocus: false,
+                      spellChecker: false,
+                      placeholder: '添加您的精彩回复！',
+                    }}
+                  />
+                </section>
+                <section>
+                  {
+                    topic.createdReplies.map(reply => (
+                      <Reply reply={reply} key={reply.id} />
+                    ))
+                  }
+                </section>
               </Paper>
             ) :
             null
@@ -86,6 +112,7 @@ class TopicDetail extends React.Component {
 
 TopicDetail.wrappedComponent.propTypes = {
   topicStore: PropTypes.object.isRequired,
+  // user: PropTypes.object.isRequired,
 };
 
 export default withStyles(topicDetailStyle)(TopicDetail);
