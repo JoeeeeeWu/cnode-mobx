@@ -62,7 +62,6 @@ class MainAppBar extends React.Component {
       classes,
       user,
     } = this.props;
-    console.log(this.props);
     return (
       <div className={classes.root}>
         <AppBar position="fixed">

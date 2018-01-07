@@ -37,7 +37,6 @@ const createApp = (TheApp) => {
   return Main;
 };
 
-console.log(AppStore);
 const appStore = new AppStore(initialState.appStore);
 const topicStore = new TopicStore(initialState.topicStore);
 

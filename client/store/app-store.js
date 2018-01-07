@@ -55,12 +55,10 @@ export default class AppStore {
     return new Promise((resolve, reject) => {
       get(`/user/${this.user.info.loginname}`)
         .then((res) => {
-          if (res.status === 200 && res.data.success) {
-            this.user.detail.recent_replies = res.data.data.recent_replies;
-            this.user.detail.recent_topics = res.data.data.recent_topics;
+          if (res.success) {
+            this.user.detail.recent_replies = res.data.recent_replies;
+            this.user.detail.recent_topics = res.data.recent_topics;
             resolve();
-          } else {
-            reject(res.data.msg);
           }
           this.user.detail.syncing = false;
         }).catch((err) => {
@@ -76,11 +74,9 @@ export default class AppStore {
     return new Promise((resolve, reject) => {
       get(`/topic_collect/${this.user.info.loginname}`)
         .then((res) => {
-          if (res.status === 200 && res.data.success) {
-            this.user.collections.list = res.data.data;
+          if (res.success) {
+            this.user.collections.list = res.data;
             resolve();
-          } else {
-            reject(res.data.msg);
           }
           this.user.collections.syncing = false;
         }).catch((err) => {

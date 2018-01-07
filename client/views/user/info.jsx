@@ -44,7 +44,7 @@ class UserInfo extends React.Component {
     user: PropTypes.object.isRequired,
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.props.appStore.getUserDetail();
     this.props.appStore.getUserCollection();
   }
