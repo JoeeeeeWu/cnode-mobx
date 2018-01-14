@@ -54,7 +54,7 @@ class TopicList extends React.Component {
     });
   }
 
-  listItemClick = (id) => {
+  goToTopic = (id) => {
     this.context.router.history.push(`/detail/${id}`);
   }
 
@@ -87,7 +87,7 @@ class TopicList extends React.Component {
                   <TopicListItem
                     key={topic.id}
                     topic={topic}
-                    onClick={() => this.listItemClick(topic.id)}
+                    onClick={() => this.goToTopic(topic.id)}
                   />
                 ))
               }
@@ -100,7 +100,7 @@ class TopicList extends React.Component {
               <TopicListItem
                 key={topic.id}
                 topic={topic}
-                onClick={() => this.listItemClick(topic.id)}
+                onClick={() => this.goToTopic(topic.id)}
               />
             ))
           }
