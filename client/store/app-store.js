@@ -2,6 +2,7 @@ import {
   observable,
   // computed,
   action,
+  toJS,
 } from 'mobx';
 
 import { get, post } from '../util/http';
@@ -12,7 +13,9 @@ export default class AppStore {
   @observable
   user = {
     isLogin: false,
-    info: {},
+    info: {
+      loginname: '用户',
+    },
     detail: {
       syncing: false,
       recent_topics: [],
@@ -25,6 +28,12 @@ export default class AppStore {
   };
   @observable
   activeNotifications = [];
+
+  init = ({ user }) => {
+    if (user) {
+      this.user = user;
+    }
+  }
 
   @action
   notify = (config) => {
@@ -85,5 +94,9 @@ export default class AppStore {
         });
     });
   }
+
+  toJson = () => ({
+    user: toJS(this.user),
+  });
 }
 

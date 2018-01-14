@@ -1,6 +1,6 @@
 import {
   observable,
-  // toJS,
+  toJS,
   computed,
   action,
   extendObservable,
@@ -55,12 +55,18 @@ class TopicStore {
   @observable
   cteatedTopics;
   @observable
-  tab = undefined;
+  tab;
 
-  constructor({ syncing = false, topics = [], details = [] } = {}) {
+  constructor({
+    syncing = false,
+    topics = [],
+    tab = null,
+    details = [],
+  } = {}) {
     this.syncing = syncing;
     this.topics = topics.map(topic => new Topic(createTopic(topic)));
     this.details = details.map(detail => new Topic(createTopic(detail)));
+    this.tab = tab;
   }
 
   @computed get detailMap() {
@@ -72,23 +78,28 @@ class TopicStore {
 
   @action
   fetchTopics = tab => new Promise((resolve, reject) => {
-    this.syncing = true;
-    this.topics = [];
-    get('/topics', {
-      mdrender: false,
-      tab,
-    }).then((res) => {
-      if (res.success) {
-        this.topics = res.data.map(topic => new Topic(createTopic(topic)));
-        resolve();
-      } else {
-        reject();
-      }
-      this.syncing = false;
-    }).catch((err) => {
-      reject(err);
-      this.syncing = false;
-    });
+    if (tab === this.tab && this.topics.length > 0) {
+      resolve();
+    } else {
+      this.tab = tab;
+      this.syncing = true;
+      this.topics = [];
+      get('/topics', {
+        mdrender: false,
+        tab,
+      }).then((res) => {
+        if (res.success) {
+          this.topics = res.data.map(topic => new Topic(createTopic(topic)));
+          resolve();
+        } else {
+          reject();
+        }
+        this.syncing = false;
+      }).catch((err) => {
+        reject(err);
+        this.syncing = false;
+      });
+    }
   })
 
   @action
@@ -138,6 +149,13 @@ class TopicStore {
         reject(new Error('未知错误'));
       }
     });
+  });
+
+  toJson = () => ({
+    topics: toJS(this.topics),
+    syncing: this.syncing,
+    details: toJS(this.details),
+    tab: this.tab,
   });
 }
 

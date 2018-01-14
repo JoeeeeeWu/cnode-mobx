@@ -19,24 +19,32 @@ const getStoreState = stores => (
 );
 
 module.exports = (bundle, template, req, res) => {
+  const { user } = req.session;
+  const createApp = bundle.default;
+  const { createStoreMap } = bundle;
+  const routerContext = {};
+  const stores = createStoreMap();
+
+  if (user) {
+    stores.appStore.user.isLogin = true;
+    stores.appStore.user.info = user;
+  }
+
+  const theme = createMuiTheme({
+    palette: {
+      primary: colors.pink,
+      accent: colors.lightBlue,
+      type: 'light',
+    },
+  });
+
+  const sheetsRegistry = new SheetsRegistry();
+  const jss = create(preset());
+  jss.options.createGenerateClassName = createGenerateClassName;
+
+  const app = createApp(stores, routerContext, sheetsRegistry, jss, theme, req.url);
+
   return new Promise((resolve, reject) => {
-    const { createStoreMap } = bundle;
-    const createApp = bundle.default;
-
-    const routerContext = {};
-    const stores = createStoreMap();
-    const sheetsRegistry = new SheetsRegistry();
-    const jss = create(preset());
-    jss.options.createGenerateClassName = createGenerateClassName;
-    const theme = createMuiTheme({
-      palette: {
-        primary: colors.pink,
-        accent: colors.lightBlue,
-        type: 'light',
-      },
-    });
-    const app = createApp(stores, routerContext, sheetsRegistry, jss, theme, req.url);
-
     asyncBootstrap(app).then(() => {
       if (routerContext.url) {
         res.status(302).setHeader('Location', routerContext.url);

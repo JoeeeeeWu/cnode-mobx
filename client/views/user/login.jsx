@@ -75,7 +75,7 @@ class UserLogin extends React.Component {
             label="请输入cnode accesstoken"
             placeholder="请输入cnode accesstoken"
             required
-            helpText={this.state.helpText}
+            helperText={this.state.helpText}
             value={this.state.accesstoken}
             onChange={this.handleInput}
             className={classes.input}
