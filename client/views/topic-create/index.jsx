@@ -74,7 +74,9 @@ class TopicCreate extends React.Component {
       });
     }
     return this.props.topicStore.createTopic(title, tab, content)
-      .then(() => this.context.router.history.push('/index'))
+      .then(() => {
+        this.context.router.history.push('/index');
+      })
       .catch(err => appStore.notify({
         message: err.message,
       }));

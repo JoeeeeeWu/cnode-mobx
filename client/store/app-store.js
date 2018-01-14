@@ -35,7 +35,7 @@ export default class AppStore {
 
   @action
   login = accessToken => new Promise((resolve, reject) => {
-    post('/user/login', {}, {
+    post('/user/login', {
       accessToken,
     }).then((res) => {
       if (res.success) {

@@ -17,7 +17,32 @@ class Topic {
     extendObservable(this, data);
   }
   @observable
+  createdReplies = [];
+  @observable
   syncing = false;
+
+  @action
+  doReply = content => new Promise((resolve, reject) => {
+    post(`/topic/${this.id}/replies`, {
+      content,
+    })
+      .then((res) => {
+        if (res.success) {
+          this.createdReplies.push({
+            create_at: Date.now(),
+            id: res.reply_id,
+            content,
+          });
+          resolve({
+            replyId: res.reply_id,
+            content,
+          });
+        } else {
+          reject();
+        }
+      })
+      .catch(reject);
+  });
 }
 
 class TopicStore {
@@ -91,6 +116,7 @@ class TopicStore {
       title,
       content,
       tab,
+      needAccessToken: true,
     }).then((res) => {
       if (res.success) {
         const topic = {

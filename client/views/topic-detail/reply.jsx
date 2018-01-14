@@ -13,6 +13,7 @@ const Reply = ({ reply, classes }) => (
       <Avatar src={reply.author.avatar_url} />
     </div>
     <div className={classes.right}>
+      <span>{`${reply.author.loginname}`}</span>
       <p dangerouslySetInnerHTML={{ __html: marked(reply.content) }} />
     </div>
   </div>

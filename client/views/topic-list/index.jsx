@@ -62,6 +62,7 @@ class TopicList extends React.Component {
     const {
       topicStore: {
         topics,
+        createdTopics,
         syncing: syncingTopics,
       },
     } = this.props;
@@ -78,6 +79,21 @@ class TopicList extends React.Component {
             Object.keys(tabs).map(t => <Tab key={t} label={tabs[t]} value={t} />)
           }
         </Tabs>
+        {
+          createdTopics && createdTopics.length > 0 ?
+            <List style={{ backgroundColor: '#dfdfdf' }}>
+              {
+                createdTopics.map(topic => (
+                  <TopicListItem
+                    key={topic.id}
+                    topic={topic}
+                    onClick={() => this.listItemClick(topic.id)}
+                  />
+                ))
+              }
+            </List> :
+            null
+        }
         <List>
           {
             topics.map(topic => (

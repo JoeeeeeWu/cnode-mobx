@@ -18,7 +18,7 @@ export const get = (url, params = {}) => (
   })
 );
 
-export const post = (url, params, data) => (
+export const post = (url, data) => (
   new Promise((resolve, reject) => {
     axios.post(`${baseUrl}/api${url}`, data)
       .then(res => resolve(res.data))
