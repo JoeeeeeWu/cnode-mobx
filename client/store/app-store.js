@@ -29,7 +29,7 @@ export default class AppStore {
   @observable
   activeNotifications = [];
 
-  init = ({ user }) => {
+  init = ({ user } = {}) => {
     if (user) {
       this.user = user;
     }

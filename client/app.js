@@ -18,7 +18,7 @@ const theme = createMuiTheme({
   },
 });
 
-const initialState = window.__INITIAL__STATE__ || {}; // eslint-disable-line
+const initialState = window.__INITIAL_STATE__ || {}; // eslint-disable-line
 
 const createApp = (TheApp) => {
   class Main extends React.Component {
@@ -38,7 +38,7 @@ const createApp = (TheApp) => {
 };
 
 const appStore = new AppStore();
-// appStore.init(initialState.appStore);
+appStore.init(initialState.appStore);
 const topicStore = new TopicStore(initialState.topicStore);
 
 const root = document.getElementById('root');
